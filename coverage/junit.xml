@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="17" failures="4" errors="0" time="0.246">
+  <testsuite name="AdvancedLeadScoringEngine" errors="0" failures="4" skipped="0" timestamp="2025-07-14T18:58:18" time="0.136" tests="17">
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should calculate a valid score between 0 and 100" name="AdvancedLeadScoringEngine calculateScore should calculate a valid score between 0 and 100" time="0.001">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should return confidence between 0 and 1" name="AdvancedLeadScoringEngine calculateScore should return confidence between 0 and 1" time="0.001">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should include all scoring factors" name="AdvancedLeadScoringEngine calculateScore should include all scoring factors" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should provide explanations for the score" name="AdvancedLeadScoringEngine calculateScore should provide explanations for the score" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should provide actionable recommendations" name="AdvancedLeadScoringEngine calculateScore should provide actionable recommendations" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine calculateScore should provide next best actions" name="AdvancedLeadScoringEngine calculateScore should provide next best actions" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine demographic scoring should score higher for senior titles" name="AdvancedLeadScoringEngine demographic scoring should score higher for senior titles" time="0">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 75
+Received:   75
+    at Object.&lt;anonymous&gt; (/Users/robertpetillo/Documents/augment-projects/Lead ai/tests/ai/leadScoring.test.ts:200:48)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine demographic scoring should score higher for technology industry" name="AdvancedLeadScoringEngine demographic scoring should score higher for technology industry" time="0">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 75
+Received:   75
+    at Object.&lt;anonymous&gt; (/Users/robertpetillo/Documents/augment-projects/Lead ai/tests/ai/leadScoring.test.ts:219:46)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine behavioral scoring should score higher with more activities" name="AdvancedLeadScoringEngine behavioral scoring should score higher with more activities" time="0.001">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine behavioral scoring should score higher for high-value activities" name="AdvancedLeadScoringEngine behavioral scoring should score higher for high-value activities" time="0">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 35
+Received:   35
+    at Object.&lt;anonymous&gt; (/Users/robertpetillo/Documents/augment-projects/Lead ai/tests/ai/leadScoring.test.ts:272:45)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine temporal scoring should score higher for recent activities" name="AdvancedLeadScoringEngine temporal scoring should score higher for recent activities" time="0">
+      <failure>Error: expect(received).toBeGreaterThan(expected)
+
+Expected: &gt; 25
+Received:   25
+    at Object.&lt;anonymous&gt; (/Users/robertpetillo/Documents/augment-projects/Lead ai/tests/ai/leadScoring.test.ts:300:45)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)</failure>
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine temporal scoring should score higher for fresh leads" name="AdvancedLeadScoringEngine temporal scoring should score higher for fresh leads" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine conversational scoring should score higher for positive sentiment" name="AdvancedLeadScoringEngine conversational scoring should score higher for positive sentiment" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine conversational scoring should score higher for purchase intent" name="AdvancedLeadScoringEngine conversational scoring should score higher for purchase intent" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine edge cases should handle leads with no activities" name="AdvancedLeadScoringEngine edge cases should handle leads with no activities" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine edge cases should handle leads with no conversations" name="AdvancedLeadScoringEngine edge cases should handle leads with no conversations" time="0">
+    </testcase>
+    <testcase classname="AdvancedLeadScoringEngine edge cases should handle leads with minimal data" name="AdvancedLeadScoringEngine edge cases should handle leads with minimal data" time="0">
+    </testcase>
+  </testsuite>
+</testsuites>

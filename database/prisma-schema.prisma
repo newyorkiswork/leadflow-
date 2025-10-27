@@ -1,0 +1,417 @@
+// LeadAI Pro - Prisma Schema
+// This is your Prisma schema file for the LeadAI Pro database
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum UserRole {
+  admin
+  manager
+  sales_rep
+  marketing
+  viewer
+}
+
+enum OrganizationSize {
+  startup
+  small
+  medium
+  large
+  enterprise
+}
+
+enum LeadStatus {
+  new
+  contacted
+  qualified
+  proposal
+  negotiation
+  closed_won
+  closed_lost
+  nurturing
+  unqualified
+}
+
+enum EngagementLevel {
+  unknown
+  low
+  medium
+  high
+  very_high
+}
+
+enum InsightType {
+  buying_signal
+  churn_risk
+  optimal_contact_time
+  content_recommendation
+  next_best_action
+  competitive_threat
+}
+
+enum PriorityLevel {
+  low
+  medium
+  high
+  urgent
+}
+
+enum ActivityType {
+  call
+  email
+  meeting
+  demo
+  proposal
+  follow_up
+  note
+  task
+  social_interaction
+}
+
+enum ConversationDirection {
+  inbound
+  outbound
+}
+
+enum ForecastType {
+  revenue
+  lead_volume
+  conversion_rate
+  deal_velocity
+}
+
+// Core Models
+model Organization {
+  id               String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String           @db.VarChar(255)
+  domain           String?          @db.VarChar(255)
+  industry         String?          @db.VarChar(100)
+  size             OrganizationSize?
+  settings         Json             @default("{}")
+  aiConfig         Json             @default("{}") @map("ai_config")
+  subscriptionTier String           @default("free") @map("subscription_tier") @db.VarChar(50)
+  createdAt        DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  users             User[]
+  teams             Team[]
+  leads             Lead[]
+  forecasts         Forecast[]
+  performanceMetrics PerformanceMetric[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email          String    @unique @db.VarChar(255)
+  fullName       String    @map("full_name") @db.VarChar(255)
+  avatarUrl      String?   @map("avatar_url")
+  role           UserRole  @default(sales_rep)
+  organizationId String    @map("organization_id") @db.Uuid
+  teamId         String?   @map("team_id") @db.Uuid
+  preferences    Json      @default("{}")
+  aiSettings     Json      @default("{}") @map("ai_settings")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastActiveAt   DateTime  @default(now()) @map("last_active_at") @db.Timestamptz(6)
+
+  // Relations
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  team               Team?               @relation(fields: [teamId], references: [id])
+  assignedLeads      Lead[]              @relation("AssignedLeads")
+  managedTeams       Team[]              @relation("TeamManager")
+  activities         Activity[]
+  acknowledgedInsights AiInsight[]       @relation("AcknowledgedInsights")
+  performanceMetrics PerformanceMetric[]
+
+  @@map("users")
+}
+
+model Team {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String   @db.VarChar(255)
+  description    String?
+  managerId      String?  @map("manager_id") @db.Uuid
+  settings       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  manager            User?               @relation("TeamManager", fields: [managerId], references: [id])
+  members            User[]
+  leads              Lead[]
+  performanceMetrics PerformanceMetric[]
+
+  @@map("teams")
+}
+
+model Lead {
+  id                     String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId         String           @map("organization_id") @db.Uuid
+  assignedTo             String?          @map("assigned_to") @db.Uuid
+  teamId                 String?          @map("team_id") @db.Uuid
+  
+  // Basic Information
+  firstName              String           @map("first_name") @db.VarChar(255)
+  lastName               String           @map("last_name") @db.VarChar(255)
+  email                  String?          @db.VarChar(255)
+  phone                  String?          @db.VarChar(50)
+  company                String?          @db.VarChar(255)
+  jobTitle               String?          @map("job_title") @db.VarChar(255)
+  
+  // Address Information
+  address                Json?
+  
+  // Lead Status and Scoring
+  status                 LeadStatus       @default(new)
+  stage                  String           @default("prospect") @db.VarChar(100)
+  source                 String?          @db.VarChar(100)
+  campaign               String?          @db.VarChar(255)
+  
+  // AI-Enhanced Fields
+  currentScore           Int              @default(0) @map("current_score")
+  scoreConfidence        Decimal          @default(0.0) @map("score_confidence") @db.Decimal(3, 2)
+  predictedValue         Decimal?         @map("predicted_value") @db.Decimal(12, 2)
+  conversionProbability  Decimal?         @map("conversion_probability") @db.Decimal(3, 2)
+  
+  // Behavioral Insights
+  engagementLevel        EngagementLevel  @default(unknown) @map("engagement_level")
+  communicationPreference Json            @default("{}") @map("communication_preference")
+  optimalContactTime     Json             @default("{}") @map("optimal_contact_time")
+  
+  // Custom Fields and Tags
+  customFields           Json             @default("{}") @map("custom_fields")
+  tags                   String[]         @default([])
+  
+  // Metadata
+  createdAt              DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastContactedAt        DateTime?        @map("last_contacted_at") @db.Timestamptz(6)
+  nextFollowUpAt         DateTime?        @map("next_follow_up_at") @db.Timestamptz(6)
+
+  // Relations
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedUser    User?           @relation("AssignedLeads", fields: [assignedTo], references: [id])
+  team            Team?           @relation(fields: [teamId], references: [id])
+  scores          LeadScore[]
+  insights        AiInsight[]
+  journeyEvents   JourneyEvent[]
+  activities      Activity[]
+  conversations   Conversation[]
+
+  @@map("leads")
+}
+
+model LeadScore {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId              String   @map("lead_id") @db.Uuid
+  score               Int
+  confidence          Decimal  @db.Decimal(3, 2)
+  modelVersion        String   @map("model_version") @db.VarChar(50)
+  
+  // Scoring factors breakdown
+  demographicScore    Int?     @map("demographic_score")
+  behavioralScore     Int?     @map("behavioral_score")
+  temporalScore       Int?     @map("temporal_score")
+  conversationalScore Int?     @map("conversational_score")
+  
+  // Explanations and recommendations
+  explanation         Json
+  recommendations     Json     @default("[]")
+  
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("lead_scores")
+}
+
+model AiInsight {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String        @map("lead_id") @db.Uuid
+  insightType     InsightType   @map("insight_type")
+  
+  // Insight data
+  title           String        @db.VarChar(255)
+  description     String
+  confidence      Decimal       @db.Decimal(3, 2)
+  priority        PriorityLevel @default(medium)
+  
+  // Insight metadata
+  data            Json          @default("{}")
+  expiresAt       DateTime?     @map("expires_at") @db.Timestamptz(6)
+  acknowledgedBy  String?       @map("acknowledged_by") @db.Uuid
+  acknowledgedAt  DateTime?     @map("acknowledged_at") @db.Timestamptz(6)
+  
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead            Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  acknowledgedUser User? @relation("AcknowledgedInsights", fields: [acknowledgedBy], references: [id])
+
+  @@map("ai_insights")
+}
+
+model JourneyEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId      String   @map("lead_id") @db.Uuid
+  eventType   String   @map("event_type") @db.VarChar(100)
+  eventName   String   @map("event_name") @db.VarChar(255)
+  
+  // Event details
+  description String?
+  properties  Json     @default("{}")
+  
+  // Context
+  userId      String?  @map("user_id") @db.Uuid
+  sessionId   String?  @map("session_id") @db.VarChar(255)
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+  
+  // Timing
+  occurredAt  DateTime @default(now()) @map("occurred_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("journey_events")
+}
+
+model Activity {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String       @map("lead_id") @db.Uuid
+  userId          String       @map("user_id") @db.Uuid
+  
+  // Activity details
+  type            ActivityType
+  subject         String?      @db.VarChar(500)
+  description     String?
+  outcome         String?      @db.VarChar(255)
+  
+  // Scheduling
+  scheduledAt     DateTime?    @map("scheduled_at") @db.Timestamptz(6)
+  completedAt     DateTime?    @map("completed_at") @db.Timestamptz(6)
+  durationMinutes Int?         @map("duration_minutes")
+  
+  // AI Analysis
+  sentimentScore  Decimal?     @map("sentiment_score") @db.Decimal(3, 2)
+  intentDetected  String?      @map("intent_detected") @db.VarChar(100)
+  buyingSignals   Json         @default("[]") @map("buying_signals")
+  
+  // Metadata
+  metadata        Json         @default("{}")
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  lead          Lead           @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id])
+  conversations Conversation[]
+
+  @@map("activities")
+}
+
+model Conversation {
+  id         String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId     String                @map("lead_id") @db.Uuid
+  activityId String?               @map("activity_id") @db.Uuid
+  
+  // Message details
+  direction  ConversationDirection
+  channel    String                @db.VarChar(50)
+  subject    String?               @db.VarChar(500)
+  content    String
+  
+  // AI Analysis Results
+  sentiment  Json                  @default("{}")
+  intent     Json                  @default("{}")
+  topics     Json                  @default("[]")
+  entities   Json                  @default("[]")
+  
+  // Metadata
+  externalId String?               @map("external_id") @db.VarChar(255)
+  threadId   String?               @map("thread_id") @db.VarChar(255)
+  metadata   Json                  @default("{}")
+  
+  createdAt  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  analyzedAt DateTime?             @map("analyzed_at") @db.Timestamptz(6)
+
+  // Relations
+  lead     Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  activity Activity? @relation(fields: [activityId], references: [id])
+
+  @@map("conversations")
+}
+
+model Forecast {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String       @map("organization_id") @db.Uuid
+  forecastType    ForecastType @map("forecast_type")
+  
+  // Forecast period
+  periodStart     DateTime     @map("period_start") @db.Date
+  periodEnd       DateTime     @map("period_end") @db.Date
+  granularity     String       @default("monthly") @db.VarChar(20)
+  
+  // Predictions
+  predictedValue  Decimal      @map("predicted_value") @db.Decimal(15, 2)
+  confidenceLower Decimal?     @map("confidence_lower") @db.Decimal(15, 2)
+  confidenceUpper Decimal?     @map("confidence_upper") @db.Decimal(15, 2)
+  
+  // Model information
+  modelVersion    String       @map("model_version") @db.VarChar(50)
+  keyDrivers      Json         @default("[]") @map("key_drivers")
+  scenarios       Json         @default("{}")
+  
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("forecasts")
+}
+
+model PerformanceMetric {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String?  @map("user_id") @db.Uuid
+  teamId            String?  @map("team_id") @db.Uuid
+  organizationId    String   @map("organization_id") @db.Uuid
+  
+  // Time period
+  periodStart       DateTime @map("period_start") @db.Date
+  periodEnd         DateTime @map("period_end") @db.Date
+  
+  // Metrics
+  leadsCreated      Int      @default(0) @map("leads_created")
+  leadsQualified    Int      @default(0) @map("leads_qualified")
+  leadsConverted    Int      @default(0) @map("leads_converted")
+  revenueGenerated  Decimal  @default(0) @map("revenue_generated") @db.Decimal(15, 2)
+  activitiesCompleted Int    @default(0) @map("activities_completed")
+  
+  // Calculated metrics
+  conversionRate    Decimal? @map("conversion_rate") @db.Decimal(5, 4)
+  averageDealSize   Decimal? @map("average_deal_size") @db.Decimal(15, 2)
+  salesVelocity     Decimal? @map("sales_velocity") @db.Decimal(10, 2)
+  
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  user         User?        @relation(fields: [userId], references: [id])
+  team         Team?        @relation(fields: [teamId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("performance_metrics")
+}
