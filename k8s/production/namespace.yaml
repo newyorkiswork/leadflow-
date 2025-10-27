@@ -1,0 +1,9 @@
+# LeadFlow AI - Kubernetes Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: leadflow-ai
+  labels:
+    name: leadflow-ai
+    environment: production
+    app: leadflow-ai

@@ -1,0 +1,1378 @@
+// LeadFlow AI - Real Estate Investor Platform Schema (2025)
+// PostgreSQL schema optimized for property investment workflows, skip tracing, and deal management
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enhanced Enums for Lead AI Pro (2025)
+enum UserRole {
+  ADMIN
+  MANAGER
+  AGENT
+  VIEWER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum OrganizationSize {
+  STARTUP
+  SMALL
+  MEDIUM
+  LARGE
+  ENTERPRISE
+}
+
+enum SubscriptionTier {
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+  CUSTOM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIAL
+  EXPIRED
+  CANCELLED
+}
+
+enum LeadSource {
+  MANUAL
+  WEBSITE
+  EMAIL
+  PHONE
+  SOCIAL
+  REFERRAL
+  ADVERTISEMENT
+  EVENT
+  IMPORT
+  API
+  BUSINESS_CARD
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  NEGOTIATION
+  CONVERTED
+  LOST
+  ARCHIVED
+}
+
+enum LeadStage {
+  AWARENESS
+  INTEREST
+  CONSIDERATION
+  INTENT
+  EVALUATION
+  PURCHASE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  NOTE
+  TASK
+  SMS
+  SOCIAL
+  DOCUMENT
+}
+
+enum ActivityOutcome {
+  COMPLETED
+  NO_ANSWER
+  BUSY
+  VOICEMAIL
+  RESCHEDULED
+  CANCELLED
+}
+
+enum ConversationType {
+  CALL
+  MEETING
+  EMAIL
+  CHAT
+  SMS
+}
+
+enum CommunicationChannel {
+  PHONE
+  EMAIL
+  VIDEO
+  CHAT
+  SMS
+  SOCIAL
+  IN_PERSON
+}
+
+enum AIInsightType {
+  LEAD_SCORING
+  BEHAVIORAL_ANALYSIS
+  CONVERSATION_INTELLIGENCE
+  PREDICTIVE_ANALYTICS
+  SOCIAL_INTELLIGENCE
+  DOCUMENT_ANALYSIS
+  ENGAGEMENT_OPTIMIZATION
+  RISK_ASSESSMENT
+  VOICE_COMMAND
+  CONVERSATION_COACHING
+}
+
+enum InsightStatus {
+  ACTIVE
+  ARCHIVED
+  DISMISSED
+}
+
+enum DocumentType {
+  BUSINESS_CARD
+  CONTRACT
+  PROPOSAL
+  PRESENTATION
+  EMAIL
+  NOTE
+  IMAGE
+  OTHER
+}
+
+enum ProcessingStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum CampaignType {
+  MANUAL
+  AUTOMATED
+  DRIP
+  AB_TEST
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  PAUSED
+  CANCELLED
+}
+
+enum EmailStatus {
+  PENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  UNSUBSCRIBED
+}
+
+enum CallDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CallStatus {
+  INITIATED
+  RINGING
+  CONNECTED
+  COMPLETED
+  FAILED
+  NO_ANSWER
+  BUSY
+}
+
+enum CallOutcome {
+  SUCCESSFUL
+  NO_ANSWER
+  BUSY
+  VOICEMAIL
+  WRONG_NUMBER
+  INTERESTED
+  NOT_INTERESTED
+  CALLBACK_REQUESTED
+  MEETING_SCHEDULED
+}
+
+enum TriggerEvent {
+  LEAD_CREATED
+  DEMO_COMPLETED
+  PROPOSAL_SENT
+  NO_RESPONSE
+  MEETING_COMPLETED
+  EMAIL_OPENED
+  WEBSITE_VISIT
+}
+
+enum FollowUpType {
+  EMAIL
+  CALL
+  MEETING
+  TASK
+  SMS
+  LINKEDIN
+}
+
+enum StepStatus {
+  PENDING
+  SCHEDULED
+  EXECUTED
+  SKIPPED
+  FAILED
+}
+
+// Real Estate Specific Enums
+
+enum PropertyType {
+  SINGLE_FAMILY
+  MULTI_FAMILY
+  CONDO
+  TOWNHOUSE
+  MOBILE_HOME
+  LAND
+  COMMERCIAL
+  MIXED_USE
+  OTHER
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  UNDER_CONTRACT
+  SOLD
+  OFF_MARKET
+  FORECLOSURE
+  PRE_FORECLOSURE
+  AUCTION
+  REO
+  WHOLESALE
+}
+
+enum ListingStatus {
+  ACTIVE
+  PENDING
+  SOLD
+  EXPIRED
+  WITHDRAWN
+  COMING_SOON
+}
+
+enum OccupancyStatus {
+  OWNER_OCCUPIED
+  TENANT_OCCUPIED
+  VACANT
+  UNKNOWN
+}
+
+enum PropertyDataSource {
+  MANUAL
+  PROPSTREAM
+  MLS
+  PUBLIC_RECORDS
+  DRIVING_FOR_DOLLARS
+  BIRD_DOG
+  WHOLESALER
+  AGENT_REFERRAL
+}
+
+enum OwnerType {
+  INDIVIDUAL
+  CORPORATION
+  LLC
+  TRUST
+  PARTNERSHIP
+  GOVERNMENT
+  OTHER
+}
+
+enum OwnershipType {
+  FEE_SIMPLE
+  LIFE_ESTATE
+  LEASEHOLD
+  EASEMENT
+  OTHER
+}
+
+enum SkipTraceStatus {
+  NOT_TRACED
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+enum DealType {
+  WHOLESALE
+  FIX_AND_FLIP
+  BUY_AND_HOLD
+  BRRRR
+  LIVE_IN_FLIP
+  COMMERCIAL
+  LAND_DEVELOPMENT
+  ASSIGNMENT
+}
+
+enum InvestmentStrategy {
+  CASH_PURCHASE
+  CONVENTIONAL_LOAN
+  HARD_MONEY
+  PRIVATE_MONEY
+  SELLER_FINANCING
+  LEASE_OPTION
+  SUBJECT_TO
+  PARTNERSHIP
+}
+
+enum DealStatus {
+  LEAD
+  ANALYZING
+  OFFER_MADE
+  UNDER_CONTRACT
+  DUE_DILIGENCE
+  FUNDING
+  CLOSING
+  REHAB
+  MARKETING
+  SOLD
+  RENTED
+  HOLDING
+  CANCELLED
+}
+
+enum DealActivityType {
+  PROPERTY_VISIT
+  REPAIR_ESTIMATE
+  CONTRACTOR_BID
+  INSPECTION
+  APPRAISAL
+  LOAN_APPLICATION
+  TITLE_WORK
+  CLOSING_PREP
+  MARKETING_PREP
+  TENANT_SCREENING
+  RENT_COLLECTION
+  MAINTENANCE
+  SALE_PREP
+}
+
+enum ActivityStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  OVERDUE
+}
+
+enum ExpenseCategory {
+  ACQUISITION
+  REPAIR
+  HOLDING
+  SELLING
+  FINANCING
+  LEGAL
+  INSPECTION
+  MARKETING
+  UTILITIES
+  INSURANCE
+  TAXES
+  OTHER
+}
+
+enum RealEstateLeadType {
+  SELLER
+  BUYER
+  INVESTOR
+  WHOLESALER
+  AGENT
+  CONTRACTOR
+  LENDER
+  OTHER
+}
+
+enum MotivationLevel {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SellingTimeframe {
+  ASAP
+  WITHIN_30_DAYS
+  WITHIN_90_DAYS
+  WITHIN_6_MONTHS
+  WITHIN_1_YEAR
+  NO_RUSH
+}
+
+enum SellingReason {
+  FINANCIAL_DISTRESS
+  RELOCATION
+  DIVORCE
+  INHERITANCE
+  DOWNSIZING
+  UPSIZING
+  INVESTMENT_EXIT
+  RETIREMENT
+  JOB_CHANGE
+  HEALTH_ISSUES
+  OTHER
+}
+
+enum PropertyCondition {
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+  NEEDS_MAJOR_REPAIRS
+  TEAR_DOWN
+}
+
+// Enhanced Core Models
+model Organization {
+  id                String   @id @default(cuid())
+  name              String
+  domain            String?  @unique
+  industry          String?
+  size              OrganizationSize?
+
+  // Subscription
+  subscriptionTier  SubscriptionTier @default(STARTER)
+  subscriptionStatus SubscriptionStatus @default(ACTIVE)
+  billingEmail      String?
+
+  // Settings
+  settings          Json     @default("{}")
+  aiConfig          Json     @default("{}")
+  integrations      Json     @default("{}")
+
+  // Relationships
+  users             User[]
+  leads             Lead[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("organizations")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  email             String   @unique
+  firstName         String
+  lastName          String
+  avatar            String?
+  role              UserRole @default(AGENT)
+  status            UserStatus @default(ACTIVE)
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // Authentication
+  passwordHash      String
+  emailVerified     DateTime?
+  lastLoginAt       DateTime?
+  loginCount        Int      @default(0)
+
+  // Preferences
+  timezone          String   @default("UTC")
+  language          String   @default("en")
+  preferences       Json     @default("{}")
+
+  // AI Settings
+  aiSettings        Json     @default("{}")
+  voiceSettings     Json     @default("{}")
+
+  // Relationships
+  leads             Lead[]
+  activities        Activity[]
+  conversations     Conversation[]
+  aiInsights        AIInsight[]
+  journeyEvents     JourneyEvent[]
+  emailCampaigns    EmailCampaign[]
+  callSessions      CallSession[]
+  documents         Document[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Team {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String   @map("organization_id") @db.Uuid
+  name           String   @db.VarChar(255)
+  description    String?
+  managerId      String?  @map("manager_id") @db.Uuid
+  settings       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization       Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  manager            User?               @relation("TeamManager", fields: [managerId], references: [id])
+  members            User[]
+  leads              Lead[]
+  performanceMetrics PerformanceMetric[]
+
+  @@map("teams")
+}
+
+model Lead {
+  id                     String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId         String           @map("organization_id") @db.Uuid
+  assignedTo             String?          @map("assigned_to") @db.Uuid
+  teamId                 String?          @map("team_id") @db.Uuid
+
+  // Basic Information
+  firstName              String           @map("first_name") @db.VarChar(255)
+  lastName               String           @map("last_name") @db.VarChar(255)
+  email                  String?          @db.VarChar(255)
+  phone                  String?          @db.VarChar(50)
+  company                String?          @db.VarChar(255)
+  jobTitle               String?          @map("job_title") @db.VarChar(255)
+
+  // Address Information
+  address                Json?
+
+  // Lead Status and Scoring
+  status                 LeadStatus       @default(new)
+  stage                  String           @default("prospect") @db.VarChar(100)
+  source                 String?          @db.VarChar(100)
+  campaign               String?          @db.VarChar(255)
+
+  // AI-Enhanced Fields
+  currentScore           Int              @default(0) @map("current_score")
+  scoreConfidence        Decimal          @default(0.0) @map("score_confidence") @db.Decimal(3, 2)
+  predictedValue         Decimal?         @map("predicted_value") @db.Decimal(12, 2)
+  conversionProbability  Decimal?         @map("conversion_probability") @db.Decimal(3, 2)
+
+  // Behavioral Insights
+  engagementLevel        EngagementLevel  @default(unknown) @map("engagement_level")
+  communicationPreference Json            @default("{}") @map("communication_preference")
+  optimalContactTime     Json             @default("{}") @map("optimal_contact_time")
+
+  // Custom Fields and Tags
+  customFields           Json             @default("{}") @map("custom_fields")
+  tags                   String[]         @default([])
+
+  // Real Estate Specific Fields
+  leadType               RealEstateLeadType? @map("lead_type")
+  motivationLevel        MotivationLevel? @map("motivation_level")
+  timeframe              SellingTimeframe? @map("timeframe")
+  sellingReason          SellingReason?   @map("selling_reason")
+  priceExpectation       Decimal?         @map("price_expectation") @db.Decimal(12, 2)
+  propertyCondition      PropertyCondition? @map("property_condition")
+  buyingCriteria         Json             @default("{}") @map("buying_criteria")
+  maxBudget              Decimal?         @map("max_budget") @db.Decimal(12, 2)
+  preferredAreas         String[]         @default([]) @map("preferred_areas")
+  investmentGoals        String[]         @default([]) @map("investment_goals")
+  dealProbability        Decimal          @default(0.0) @map("deal_probability") @db.Decimal(3, 2)
+
+  // Property Relationships
+  propertyId             String?          @map("property_id") @db.Uuid
+  propertyOwnerId        String?          @map("property_owner_id") @db.Uuid
+
+  // Metadata
+  createdAt              DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt              DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  lastContactedAt        DateTime?        @map("last_contacted_at") @db.Timestamptz(6)
+  nextFollowUpAt         DateTime?        @map("next_follow_up_at") @db.Timestamptz(6)
+
+  // Relations
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedUser    User?           @relation("AssignedLeads", fields: [assignedTo], references: [id])
+  team            Team?           @relation(fields: [teamId], references: [id])
+  scores          LeadScore[]
+  insights        AiInsight[]
+  journeyEvents   JourneyEvent[]
+  activities      Activity[]
+  conversations   Conversation[]
+  emotionalProfile EmotionalProfile?
+  quantumPredictions QuantumPrediction[]
+  autonomousActions AutonomousAction[]
+
+  @@map("leads")
+}
+
+model LeadScore {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId              String   @map("lead_id") @db.Uuid
+  score               Int
+  confidence          Decimal  @db.Decimal(3, 2)
+  modelVersion        String   @map("model_version") @db.VarChar(50)
+
+  // Scoring factors breakdown
+  demographicScore    Int?     @map("demographic_score")
+  behavioralScore     Int?     @map("behavioral_score")
+  temporalScore       Int?     @map("temporal_score")
+  conversationalScore Int?     @map("conversational_score")
+
+  // Explanations and recommendations
+  explanation         Json
+  recommendations     Json     @default("[]")
+
+  createdAt           DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("lead_scores")
+}
+
+model AiInsight {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String        @map("lead_id") @db.Uuid
+  insightType     InsightType   @map("insight_type")
+
+  // Insight data
+  title           String        @db.VarChar(255)
+  description     String
+  confidence      Decimal       @db.Decimal(3, 2)
+  priority        PriorityLevel @default(medium)
+
+  // Insight metadata
+  data            Json          @default("{}")
+  expiresAt       DateTime?     @map("expires_at") @db.Timestamptz(6)
+  acknowledgedBy  String?       @map("acknowledged_by") @db.Uuid
+  acknowledgedAt  DateTime?     @map("acknowledged_at") @db.Timestamptz(6)
+
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead            Lead  @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  acknowledgedUser User? @relation("AcknowledgedInsights", fields: [acknowledgedBy], references: [id])
+
+  @@map("ai_insights")
+}
+
+model JourneyEvent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId      String   @map("lead_id") @db.Uuid
+  eventType   String   @map("event_type") @db.VarChar(100)
+  eventName   String   @map("event_name") @db.VarChar(255)
+
+  // Event details
+  description String?
+  properties  Json     @default("{}")
+
+  // Context
+  userId      String?  @map("user_id") @db.Uuid
+  sessionId   String?  @map("session_id") @db.VarChar(255)
+  ipAddress   String?  @map("ip_address")
+  userAgent   String?  @map("user_agent")
+
+  // Timing
+  occurredAt  DateTime @default(now()) @map("occurred_at") @db.Timestamptz(6)
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("journey_events")
+}
+
+model Activity {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String       @map("lead_id") @db.Uuid
+  userId          String       @map("user_id") @db.Uuid
+
+  // Activity details
+  type            ActivityType
+  subject         String?      @db.VarChar(500)
+  description     String?
+  outcome         String?      @db.VarChar(255)
+
+  // Scheduling
+  scheduledAt     DateTime?    @map("scheduled_at") @db.Timestamptz(6)
+  completedAt     DateTime?    @map("completed_at") @db.Timestamptz(6)
+  durationMinutes Int?         @map("duration_minutes")
+
+  // AI Analysis
+  sentimentScore  Decimal?     @map("sentiment_score") @db.Decimal(3, 2)
+  intentDetected  String?      @map("intent_detected") @db.VarChar(100)
+  buyingSignals   Json         @default("[]") @map("buying_signals")
+
+  // Metadata
+  metadata        Json         @default("{}")
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  lead          Lead           @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user          User           @relation(fields: [userId], references: [id])
+  conversations Conversation[]
+
+  @@map("activities")
+}
+
+model Conversation {
+  id         String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId     String                @map("lead_id") @db.Uuid
+  activityId String?               @map("activity_id") @db.Uuid
+
+  // Message details
+  direction  ConversationDirection
+  channel    String                @db.VarChar(50)
+  subject    String?               @db.VarChar(500)
+  content    String
+
+  // AI Analysis Results
+  sentiment  Json                  @default("{}")
+  intent     Json                  @default("{}")
+  topics     Json                  @default("[]")
+  entities   Json                  @default("[]")
+
+  // Metadata
+  externalId String?               @map("external_id") @db.VarChar(255)
+  threadId   String?               @map("thread_id") @db.VarChar(255)
+  metadata   Json                  @default("{}")
+
+  createdAt  DateTime              @default(now()) @map("created_at") @db.Timestamptz(6)
+  analyzedAt DateTime?             @map("analyzed_at") @db.Timestamptz(6)
+
+  // Relations
+  lead     Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  activity Activity? @relation(fields: [activityId], references: [id])
+
+  @@map("conversations")
+}
+
+model Forecast {
+  id              String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String       @map("organization_id") @db.Uuid
+  forecastType    ForecastType @map("forecast_type")
+
+  // Forecast period
+  periodStart     DateTime     @map("period_start") @db.Date
+  periodEnd       DateTime     @map("period_end") @db.Date
+  granularity     String       @default("monthly") @db.VarChar(20)
+
+  // Predictions
+  predictedValue  Decimal      @map("predicted_value") @db.Decimal(15, 2)
+  confidenceLower Decimal?     @map("confidence_lower") @db.Decimal(15, 2)
+  confidenceUpper Decimal?     @map("confidence_upper") @db.Decimal(15, 2)
+
+  // Model information
+  modelVersion    String       @map("model_version") @db.VarChar(50)
+  keyDrivers      Json         @default("[]") @map("key_drivers")
+  scenarios       Json         @default("{}")
+
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("forecasts")
+}
+
+model PerformanceMetric {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String?  @map("user_id") @db.Uuid
+  teamId            String?  @map("team_id") @db.Uuid
+  organizationId    String   @map("organization_id") @db.Uuid
+
+  // Time period
+  periodStart       DateTime @map("period_start") @db.Date
+  periodEnd         DateTime @map("period_end") @db.Date
+
+  // Metrics
+  leadsCreated      Int      @default(0) @map("leads_created")
+  leadsQualified    Int      @default(0) @map("leads_qualified")
+  leadsConverted    Int      @default(0) @map("leads_converted")
+  revenueGenerated  Decimal  @default(0) @map("revenue_generated") @db.Decimal(15, 2)
+  activitiesCompleted Int    @default(0) @map("activities_completed")
+
+  // Calculated metrics
+  conversionRate    Decimal? @map("conversion_rate") @db.Decimal(5, 4)
+  averageDealSize   Decimal? @map("average_deal_size") @db.Decimal(15, 2)
+  salesVelocity     Decimal? @map("sales_velocity") @db.Decimal(10, 2)
+
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  user         User?        @relation(fields: [userId], references: [id])
+  team         Team?        @relation(fields: [teamId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("performance_metrics")
+}
+
+// 2025 Advanced AI Models
+model AutonomousAgent {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String   @map("organization_id") @db.Uuid
+  name            String   @db.VarChar(255)
+  agentType       String   @map("agent_type") @db.VarChar(100)
+  autonomyLevel   String   @map("autonomy_level") @db.VarChar(50)
+
+  // Agent Configuration
+  capabilities    Json     @default("[]")
+  learningModel   Json     @default("{}") @map("learning_model")
+  performance     Json     @default("{}")
+
+  // Status
+  isActive        Boolean  @default(true) @map("is_active")
+  lastTrainedAt   DateTime? @map("last_trained_at") @db.Timestamptz(6)
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actions         AutonomousAction[]
+
+  @@map("autonomous_agents")
+}
+
+model AutonomousAction {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  agentId         String   @map("agent_id") @db.Uuid
+  leadId          String?  @map("lead_id") @db.Uuid
+
+  // Action Details
+  actionType      String   @map("action_type") @db.VarChar(100)
+  description     String
+  executed        Boolean  @default(false)
+  requiresApproval Boolean @default(false) @map("requires_approval")
+
+  // Results
+  result          Json?
+  confidence      Decimal? @db.Decimal(3, 2)
+
+  // Timing
+  scheduledAt     DateTime? @map("scheduled_at") @db.Timestamptz(6)
+  executedAt      DateTime? @map("executed_at") @db.Timestamptz(6)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  agent           AutonomousAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  lead            Lead?           @relation(fields: [leadId], references: [id])
+
+  @@map("autonomous_actions")
+}
+
+model EmotionalProfile {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String   @unique @map("lead_id") @db.Uuid
+
+  // Emotional Intelligence Data
+  sentiment       Json     @default("{}")
+  emotions        Json     @default("{}")
+  personality     Json     @default("{}")
+  communicationStyle String? @map("communication_style") @db.VarChar(100)
+
+  // Preferences
+  preferredApproach Json   @default("[]") @map("preferred_approach")
+  optimalTiming   Json     @default("{}") @map("optimal_timing")
+
+  // Analysis Metadata
+  confidence      Decimal  @db.Decimal(3, 2)
+  lastAnalyzedAt  DateTime @map("last_analyzed_at") @db.Timestamptz(6)
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("emotional_profiles")
+}
+
+model QuantumPrediction {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  leadId          String   @map("lead_id") @db.Uuid
+
+  // Prediction Details
+  scenario        String   @db.VarChar(255)
+  probability     Decimal  @db.Decimal(5, 4)
+  uncertainty     Decimal  @db.Decimal(5, 4)
+  timeDecay       Decimal  @db.Decimal(5, 4) @map("time_decay")
+
+  // Quantum States
+  quantumStates   Json     @default("[]") @map("quantum_states")
+  entanglements   Json     @default("[]")
+
+  // Validity
+  validUntil      DateTime @map("valid_until") @db.Timestamptz(6)
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@map("quantum_predictions")
+}
+
+model MarketIntelligence {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId  String   @map("organization_id") @db.Uuid
+
+  // Intelligence Data
+  competitorAnalysis Json  @default("{}") @map("competitor_analysis")
+  industryTrends  Json     @default("{}") @map("industry_trends")
+  economicFactors Json     @default("{}") @map("economic_factors")
+  technologyShifts Json    @default("{}") @map("technology_shifts")
+  regulatoryLandscape Json @default("{}") @map("regulatory_landscape")
+
+  // Recommendations
+  recommendations Json     @default("[]")
+
+  // Metadata
+  dataSourcesUsed Json     @default("[]") @map("data_sources_used")
+  confidence      Decimal  @db.Decimal(3, 2)
+
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  validUntil      DateTime @map("valid_until") @db.Timestamptz(6)
+
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("market_intelligence")
+}
+
+// Enhanced Models for Lead AI Pro (2025)
+
+// Document Management
+model Document {
+  id                String   @id @default(cuid())
+  type              DocumentType
+  name              String
+  originalName      String?
+
+  // File Details
+  mimeType          String
+  size              Int
+  url               String
+  thumbnailUrl      String?
+
+  // AI Analysis
+  extractedText     String?
+  analysis          Json     @default("{}")
+  entities          Json     @default("{}")
+
+  // Processing
+  processed         Boolean  @default(false)
+  processingStatus  ProcessingStatus @default(PENDING)
+  processingError   String?
+
+  // Relationships
+  leadId            String?
+  lead              Lead?    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  uploadedById      String
+  uploadedBy        User     @relation(fields: [uploadedById], references: [id])
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("documents")
+  @@index([leadId])
+  @@index([type])
+}
+
+// Email Marketing
+model EmailCampaign {
+  id                String   @id @default(cuid())
+  name              String
+  subject           String
+  content           String
+
+  // Campaign Settings
+  type              CampaignType @default(MANUAL)
+  status            CampaignStatus @default(DRAFT)
+
+  // Scheduling
+  scheduledFor      DateTime?
+  sentAt            DateTime?
+
+  // A/B Testing
+  isABTest          Boolean  @default(false)
+  abTestConfig      Json     @default("{}")
+
+  // Analytics
+  totalSent         Int      @default(0)
+  totalOpened       Int      @default(0)
+  totalClicked      Int      @default(0)
+  totalReplied      Int      @default(0)
+  totalBounced      Int      @default(0)
+  totalUnsubscribed Int      @default(0)
+
+  // Relationships
+  createdById       String
+  createdBy         User     @relation(fields: [createdById], references: [id])
+  recipients        EmailCampaignRecipient[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("email_campaigns")
+  @@index([createdById])
+  @@index([status])
+}
+
+model EmailCampaignRecipient {
+  id                String   @id @default(cuid())
+
+  // Recipient Details
+  email             String
+  firstName         String?
+  lastName          String?
+
+  // Status Tracking
+  status            EmailStatus @default(PENDING)
+  sentAt            DateTime?
+  openedAt          DateTime?
+  clickedAt         DateTime?
+  repliedAt         DateTime?
+  bouncedAt         DateTime?
+  unsubscribedAt    DateTime?
+
+  // Personalization
+  personalizedSubject String?
+  personalizedContent String?
+
+  // Relationships
+  campaignId        String
+  campaign          EmailCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  leadId            String?
+  lead              Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("email_campaign_recipients")
+  @@index([campaignId, status])
+  @@index([leadId])
+}
+
+// Call Management
+model CallSession {
+  id                String   @id @default(cuid())
+
+  // Call Details
+  phoneNumber       String
+  direction         CallDirection
+  status            CallStatus @default(INITIATED)
+  outcome           CallOutcome?
+
+  // Timing
+  startedAt         DateTime?
+  endedAt           DateTime?
+  duration          Int?     // seconds
+
+  // Recording & Transcript
+  recordingUrl      String?
+  transcript        String?
+
+  // AI Analysis
+  sentiment         Float?
+  coachingScore     Int?
+  keyMoments        Json     @default("[]")
+  actionItems       String[]
+
+  // Notes
+  notes             String?
+  followUpRequired  Boolean  @default(false)
+
+  // Relationships
+  leadId            String
+  lead              Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("call_sessions")
+  @@index([leadId])
+  @@index([userId])
+}
+
+// Follow-up Sequences
+model FollowUpSequence {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+
+  // Configuration
+  triggerEvent      TriggerEvent
+  isActive          Boolean  @default(true)
+
+  // Settings
+  stopOnReply       Boolean  @default(true)
+  stopOnMeeting     Boolean  @default(true)
+  maxDuration       Int      @default(30) // days
+
+  // Analytics
+  leadsEntered      Int      @default(0)
+  completionRate    Float    @default(0.0)
+  responseRate      Float    @default(0.0)
+
+  // Relationships
+  leadId            String
+  lead              Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  steps             FollowUpStep[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("follow_up_sequences")
+  @@index([leadId])
+}
+
+model FollowUpStep {
+  id                String   @id @default(cuid())
+  stepNumber        Int
+  type              FollowUpType
+
+  // Content
+  title             String
+  content           String
+
+  // Timing
+  delayHours        Int      @default(24)
+  preferredTime     String?  // HH:MM format
+  daysOfWeek        Int[]    @default([1,2,3,4,5]) // Monday-Friday
+
+  // Automation
+  autoExecute       Boolean  @default(false)
+  requiresApproval  Boolean  @default(true)
+
+  // Status
+  status            StepStatus @default(PENDING)
+  executedAt        DateTime?
+
+  // Relationships
+  sequenceId        String
+  sequence          FollowUpSequence @relation(fields: [sequenceId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("follow_up_steps")
+  @@index([sequenceId, stepNumber])
+}
+
+// Real Estate Specific Models
+
+// Property Management
+model Property {
+  id                String   @id @default(cuid())
+
+  // Property Address
+  streetAddress     String
+  city              String
+  state             String
+  zipCode           String
+  county            String?
+
+  // Property Details
+  propertyType      PropertyType
+  bedrooms          Int?
+  bathrooms         Float?
+  squareFootage     Int?
+  lotSize           Float?
+  yearBuilt         Int?
+
+  // Financial Information
+  listPrice         Float?
+  marketValue       Float?
+  taxAssessedValue  Float?
+  annualTaxes       Float?
+  monthlyRent       Float?
+
+  // Investment Analysis
+  arv               Float?    // After Repair Value
+  repairCosts       Float?
+  acquisitionCosts  Float?
+  holdingCosts      Float?
+
+  // Property Status
+  status            PropertyStatus @default(AVAILABLE)
+  listingStatus     ListingStatus?
+  occupancyStatus   OccupancyStatus @default(UNKNOWN)
+
+  // External IDs
+  mls               String?
+  apn               String?   // Assessor Parcel Number
+  propStreamId      String?
+
+  // Property Data Sources
+  dataSource        PropertyDataSource @default(MANUAL)
+  lastUpdated       DateTime @default(now())
+
+  // Relationships
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  owners            PropertyOwner[]
+  leads             Lead[]
+  deals             Deal[]
+  comparables       Comparable[]
+  propertyAnalysis  PropertyAnalysis[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("properties")
+  @@index([organizationId, status])
+  @@index([city, state])
+  @@index([propertyType])
+  @@index([propStreamId])
+}
+
+// Property Ownership
+model PropertyOwner {
+  id                String   @id @default(cuid())
+
+  // Owner Information
+  firstName         String?
+  lastName          String?
+  companyName       String?
+  ownerType         OwnerType @default(INDIVIDUAL)
+
+  // Contact Information
+  email             String?
+  phone             String?
+  mailingAddress    String?
+  mailingCity       String?
+  mailingState      String?
+  mailingZip        String?
+
+  // Ownership Details
+  ownershipType     OwnershipType @default(FEE_SIMPLE)
+  ownershipPercent  Float    @default(100.0)
+  acquisitionDate   DateTime?
+  acquisitionPrice  Float?
+
+  // Skip Tracing
+  skipTraceStatus   SkipTraceStatus @default(NOT_TRACED)
+  skipTraceDate     DateTime?
+  skipTraceSource   String?
+  skipTraceData     Json     @default("{}")
+
+  // Relationships
+  propertyId        String
+  property          Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leads             Lead[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("property_owners")
+  @@index([propertyId])
+  @@index([skipTraceStatus])
+}
+
+// Investment Deals
+model Deal {
+  id                String   @id @default(cuid())
+
+  // Deal Basics
+  dealName          String
+  dealType          DealType
+  strategy          InvestmentStrategy
+  status            DealStatus @default(ANALYZING)
+
+  // Financial Details
+  purchasePrice     Float?
+  downPayment       Float?
+  loanAmount        Float?
+  interestRate      Float?
+  loanTerm          Int?     // months
+
+  // Investment Analysis
+  arv               Float?
+  repairCosts       Float?
+  holdingCosts      Float?
+  sellingCosts      Float?
+
+  // Returns Calculation
+  grossProfit       Float?
+  netProfit         Float?
+  roi               Float?
+  cashOnCash        Float?
+  capRate           Float?
+
+  // Timeline
+  contractDate      DateTime?
+  closingDate       DateTime?
+  rehab StartDate   DateTime?
+  rehabEndDate      DateTime?
+
+  // Deal Team
+  assignedToId      String?
+  assignedTo        User?    @relation(fields: [assignedToId], references: [id])
+
+  // Relationships
+  propertyId        String
+  property          Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leadId            String?
+  lead              Lead?    @relation(fields: [leadId], references: [id])
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  dealActivities    DealActivity[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("deals")
+  @@index([organizationId, status])
+  @@index([propertyId])
+  @@index([assignedToId])
+}
+
+// Deal Activities
+model DealActivity {
+  id                String   @id @default(cuid())
+
+  // Activity Details
+  activityType      DealActivityType
+  title             String
+  description       String?
+  status            ActivityStatus @default(PENDING)
+
+  // Timing
+  scheduledDate     DateTime?
+  completedDate     DateTime?
+  dueDate           DateTime?
+
+  // Financial Impact
+  amount            Float?
+  category          ExpenseCategory?
+
+  // Relationships
+  dealId            String
+  deal              Deal     @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("deal_activities")
+  @@index([dealId])
+  @@index([userId])
+}
